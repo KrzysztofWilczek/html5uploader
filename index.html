@@ -1,0 +1,45 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <meta charset="utf-8">  
+    <title>HTML5Uploader examples</title>  
+    <link rel="stylesheet" media="screen" type="text/css" href="css/style.css" />
+    <script src="js/html5uploader.js" type="text/javascript"></script>  
+</head>  
+<body>  
+    <div id="box">  
+        <div id="status"></div>  
+        <div id="drop"></div>  
+    </div>  
+    <div id="list"></div>  
+</body>  
+<script type="text/javascript">
+	(function(){ 
+	
+		var status = document.getElementById('status');
+		
+		new HTML5Uploader('drop', 'server.php', {
+			ignore_invalid_browsers: true, 
+			show_preview: false,
+			send_simple_one: false,
+			preview_placeholder: 'list',
+			show_preview: true,
+			
+			onCreate: function(uploader)
+			{
+				status.innerHTML = 'Drag & drop new images'
+			},
+			
+			onUploadEnd: function(file, response) {
+	
+				status.innerHTML = 'Images upload end'
+			},
+			
+			onLoadStart: function(file)
+			{
+				status.innerHTML = 'Pictures loading started';
+			}
+		});
+	})();  		
+</script>
+</html> 
