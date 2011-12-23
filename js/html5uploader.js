@@ -163,26 +163,37 @@ function HTML5Uploader(html_object_id, server_file, options) {
 		{
 			// Get binary data of file
 			var binary = event.target.result;
-			
+
 			// Create new XMLHttpRequest
 			xhr = new XMLHttpRequest();
-			xhr.open('POST', self.server_file + '?up=true', true);
-			var boundary = 'xxxxxxxxx';
-			var body = '--' + boundary + "\r\n";  
-			body += "Content-Disposition: form-data; name='upload'; filename='" + file.name + "'\r\n";  
-			body += "Content-Type: application/octet-stream\r\n\r\n";  
-			body += binary + "\r\n";  
-			body += '--' + boundary + '--';      
-			xhr.setRequestHeader('content-type', 'multipart/form-data; boundary=' + boundary);
-			
-			// Bind onReadyStateChange function to XHR
-			xhr.onreadystatechange = function()	{ upload.sendToServerState(this, file);	}
 			
 			// Since Firefox 3.6 we can use sendAsBinary function 
 			if (xhr.sendAsBinary) 
 			{ 
+				xhr.open('POST', self.server_file + '?up=true', true);
+				var boundary = 'xxxxxxxxx';
+				var body = '--' + boundary + "\r\n";  
+				body += "Content-Disposition: form-data; name='upload'; filename='" + file.name + "'\r\n";  
+				body += "Content-Type: application/octet-stream\r\n\r\n";  
+				body += binary + "\r\n";  
+				body += '--' + boundary + '--';      
+				xhr.setRequestHeader('content-type', 'multipart/form-data; boundary=' + boundary);
+				
+				// Bind onReadyStateChange function to XHR
+				xhr.onreadystatechange = function()	{ upload.sendToServerState(this, file);	}
+				
 				xhr.sendAsBinary(body); 
 			} 
+			// Case for Chrome Browser
+			else
+            {
+            	xhr.open('POST', self.server_file + '?up=true&base64=true', true);
+            	xhr.setRequestHeader('UP-FILENAME', file.name);
+            	xhr.setRequestHeader('UP-SIZE', file.size);
+            	xhr.setRequestHeader('UP-TYPE', file.type);
+            	xhr.send(window.btoa(binary));
+            	xhr.onreadystatechange = function() { upload.sendToServerState(this, file);    }
+            }
 			
 			// Show preview of upload image
 			if (self.options.show_preview)
